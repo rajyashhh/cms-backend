@@ -1,0 +1,93 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "blocks",
+      "required": true
+    },
+    "price": {
+      "type": "decimal",
+      "required": true
+    },
+    "quantity": {
+      "type": "string"
+    },
+    "purity": {
+      "type": "string"
+    },
+    "aplc": {
+      "type": "biginteger"
+    },
+    "references": {
+      "type": "blocks",
+      "required": true
+    },
+    "productVideo": {
+      "type": "media",
+      "multiple": true,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "storage": {
+      "type": "string"
+    },
+    "thirdpartytesting": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "chemicalProperties": {
+      "type": "component",
+      "component": "shared.chemical-properties",
+      "repeatable": false
+    },
+    "coa": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "catorgory": {
+      "type": "string",
+      "required": true
+    },
+    "chemicalFormulaImg": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

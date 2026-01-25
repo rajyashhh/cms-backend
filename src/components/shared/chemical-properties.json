@@ -1,0 +1,60 @@
+{
+  "collectionName": "components_shared_chemical_properties",
+  "info": {
+    "displayName": "chemicalProperties"
+  },
+  "options": {},
+  "attributes": {
+    "molecularFormaula": {
+      "type": "string",
+      "required": true
+    },
+    "molecularWeight": {
+      "type": "decimal",
+      "required": true
+    },
+    "moinostropicMass": {
+      "type": "decimal"
+    },
+    "polarArea": {
+      "type": "decimal"
+    },
+    "complexity": {
+      "type": "decimal"
+    },
+    "xLogP": {
+      "type": "string"
+    },
+    "atomCount": {
+      "type": "decimal"
+    },
+    "hydrogenBondCount": {
+      "type": "decimal"
+    },
+    "hydrogenAccpetCount": {
+      "type": "decimal"
+    },
+    "relatableBond": {
+      "type": "decimal"
+    },
+    "CID": {
+      "type": "decimal"
+    },
+    "title1": {
+      "type": "text"
+    },
+    "key": {
+      "type": "string"
+    },
+    "title2": {
+      "type": "text"
+    },
+    "title3": {
+      "type": "text"
+    },
+    "IUPACname": {
+      "type": "text"
+    }
+  },
+  "config": {}
+}
