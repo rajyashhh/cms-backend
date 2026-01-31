@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "request_entries",
+  "info": {
+    "singularName": "request-entry",
+    "pluralName": "request-entries",
+    "displayName": "Request Entry"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "email": {
+      "type": "email"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "approved", "rejected"],
+      "default": "pending"
+    }
+  }
+}
