@@ -47,6 +47,16 @@
         "audios"
       ]
     },
+    "productVideoSafari": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
     "storage": {
       "type": "string"
     },

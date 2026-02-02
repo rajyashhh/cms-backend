@@ -634,6 +634,10 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       true
     > &
       Schema.Attribute.Required;
+    productVideoSafari: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
     publishedAt: Schema.Attribute.DateTime;
     purity: Schema.Attribute.String;
     quantity: Schema.Attribute.String;
