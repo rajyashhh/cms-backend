@@ -41,8 +41,8 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
 
   async create(ctx) {
     try {
-      // Remove user from request body if present (security: only use authenticated user)
-      const { user, ...restData } = ctx.request.body.data || {};
+      // Get request data
+      const requestData = ctx.request.body.data || {};
       
       // Get the authenticated user's email
       const authenticatedUser = await strapi.entityService.findOne(
@@ -51,21 +51,36 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         { fields: ["email"] }
       );
       
-      // Set orderDate as ISO string, user, and userEmail
-      ctx.request.body.data = {
-        ...restData,
-        orderDate: new Date().toISOString(),
-        user: ctx.state.user.id,
-        userEmail: authenticatedUser?.email || "",
-      };
+      console.log("Creating order for user:", ctx.state.user.id);
+      console.log("User email:", authenticatedUser?.email);
+      console.log("Request data:", JSON.stringify(requestData, null, 2));
       
-      console.log("Creating order with data:", JSON.stringify(ctx.request.body.data, null, 2));
+      // Create the order directly using entityService
+      // For manyToOne relations in Strapi v4, pass the ID directly
+      const newOrder = await strapi.entityService.create("api::order.order", {
+        data: {
+          items: requestData.items,
+          orderDate: new Date().toISOString(),
+          totalQuantity: requestData.totalQuantity,
+          user: ctx.state.user.id,
+          userEmail: authenticatedUser?.email || "",
+        },
+      });
       
-      const result = await super.create(ctx);
-      return result;
+      console.log("Order created successfully:", newOrder.id);
+      
+      // Return in Strapi v4 format
+      return { data: newOrder };
     } catch (error) {
       console.error("Error in order creation:", error);
-      ctx.throw(500, error);
+      console.error("Error message:", error.message);
+      console.error("Error details:", error.details);
+      
+      // Return a proper error response
+      return ctx.badRequest("Failed to create order", { 
+        error: error.message,
+        details: error.details 
+      });
     }
   },
 }));
