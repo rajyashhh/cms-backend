@@ -37,11 +37,19 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   },
 
   async create(ctx) {
+    // Ensure user is authenticated
+    if (!ctx.state.user) {
+      return ctx.unauthorized("You must be logged in to create an order");
+    }
+
     ctx.request.body.data = {
       ...(ctx.request.body.data || {}),
       orderDate: new Date(),
-      user: ctx.state.user.id, // <-- This line is required!
+      user: ctx.state.user.id,
     };
-    return await super.create(ctx);
+
+    const response = await super.create(ctx);
+    console.log("Order created for user:", ctx.state.user.id);
+    return response;
   },
 }));
