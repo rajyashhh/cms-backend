@@ -42,14 +42,22 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       return ctx.unauthorized("You must be logged in to create an order");
     }
 
-    ctx.request.body.data = {
-      ...(ctx.request.body.data || {}),
-      orderDate: new Date(),
-      user: ctx.state.user.id,
-    };
+    const { items, totalQuantity } = ctx.request.body.data;
 
-    const response = await super.create(ctx);
+    // Create order using entity service (properly handles relations)
+    const order = await strapi.entityService.create("api::order.order", {
+      data: {
+        items,
+        totalQuantity,
+        orderDate: new Date(),
+        user: ctx.state.user.id, // Entity service handles relations correctly
+      },
+      populate: { user: true }, // Return the populated user relation
+    });
+
     console.log("Order created for user:", ctx.state.user.id);
-    return response;
+
+    // Return in the same format as REST API
+    return { data: order };
   },
 }));
