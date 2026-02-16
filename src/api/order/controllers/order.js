@@ -37,14 +37,11 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   },
 
   async create(ctx) {
-    // Automatically attach the logged-in user to the order
+    // Only set orderDate here; user will be set in a lifecycle hook
     ctx.request.body.data = {
       ...(ctx.request.body.data || {}),
-      user: ctx.state.user.id,
       orderDate: new Date(),
     };
-
-    const response = await super.create(ctx);
-    return response;
+    return await super.create(ctx);
   },
 }));
