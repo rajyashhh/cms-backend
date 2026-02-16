@@ -14,7 +14,9 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       ...ctx.query,
       filters: {
         ...(ctx.query.filters || {}),
-        user: ctx.state.user.id,
+        user: {
+          id: ctx.state.user.id, // Correct syntax for filtering by relation
+        },
       },
     };
     return await super.find(ctx);
