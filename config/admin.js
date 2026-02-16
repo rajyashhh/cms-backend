@@ -1,7 +1,10 @@
 module.exports = ({ env }) => ({
   auth: {
     secret: env("ADMIN_JWT_SECRET"),
-    expiresIn: 900, // 15 minutes in seconds
+    sessions: {
+      maxRefreshTokenLifespan: 7 * 24 * 60 * 60, // 7 days in seconds
+      maxSessionLifespan: 24 * 60 * 60, // 1 day in seconds
+    },
   },
   apiToken: {
     salt: env("API_TOKEN_SALT"),

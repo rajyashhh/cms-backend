@@ -6,7 +6,7 @@ module.exports = (_env) => ({
   "users-permissions": {
     config: {
       jwt: {
-        expiresIn: "1m", // Set JWT expiry to 1 hour
+        expiresIn: "1h", // Set JWT expiry to 1 hour
       },
     },
   },
