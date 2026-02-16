@@ -625,6 +625,7 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+    userEmail: Schema.Attribute.String;
   };
 }
 

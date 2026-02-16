@@ -40,10 +40,20 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     try {
       const userId = ctx.state.user.id;
       if (!userId) {
-        ctx.throw(400, "User not authenticated");
+        ctx.throw(401, "User not authenticated");
       }
+
+      const { items, totalQuantity } = ctx.request.body.data || {};
+
+      if (!Array.isArray(items) || items.length === 0) {
+        ctx.throw(400, "Items must be a non-empty array");
+      }
+      if (typeof totalQuantity !== "number" || isNaN(totalQuantity)) {
+        ctx.throw(400, "totalQuantity must be a valid number");
+      }
+
       const data = {
-        ...(ctx.request.body.data || {}),
+        ...ctx.request.body.data,
         user: userId,
         orderDate: new Date(),
       };
