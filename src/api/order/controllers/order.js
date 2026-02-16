@@ -37,16 +37,31 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   },
 
   async create(ctx) {
+    // Validate authenticated user
+    if (!ctx.state.user) {
+      return ctx.unauthorized("You must be logged in to create an order");
+    }
+
     // Extract data from request
     const { items, totalQuantity } = ctx.request.body.data;
 
-    // Create order using entityService (bypasses some validation)
+    // Validate required fields
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return ctx.badRequest("Items array is required and cannot be empty");
+    }
+
+    if (!totalQuantity || totalQuantity <= 0) {
+      return ctx.badRequest("Valid totalQuantity is required");
+    }
+
+    // Create order using entityService
     const entity = await strapi.entityService.create("api::order.order", {
       data: {
         items,
         totalQuantity,
         orderDate: new Date(),
         user: ctx.state.user.id,
+        userEmail: ctx.state.user.email,
       },
       populate: { user: true },
     });
