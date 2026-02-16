@@ -37,12 +37,16 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   },
 
   async create(ctx) {
-    // Attach the authenticated user to the order
-    ctx.request.body.data = {
+    const userId = ctx.state.user.id;
+    const data = {
       ...(ctx.request.body.data || {}),
-      user: ctx.state.user.id, // Attach the user ID from the authenticated user
+      user: userId,
       orderDate: new Date(),
     };
-    return await super.create(ctx);
+
+    const order = await strapi.entityService.create("api::order.order", {
+      data,
+    });
+    ctx.body = order;
   },
 }));
