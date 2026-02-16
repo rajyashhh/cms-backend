@@ -40,6 +40,7 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
     // Attach the authenticated user to the order
     ctx.request.body.data = {
       ...(ctx.request.body.data || {}),
+      user: ctx.state.user.id, // Attach the user ID from the authenticated user
       orderDate: new Date(),
     };
     return await super.create(ctx);
