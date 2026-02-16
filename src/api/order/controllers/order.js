@@ -1,83 +1,46 @@
 // @ts-nocheck
 "use strict";
 
-/**
- * order controller
- */
-
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::order.order", ({ strapi }) => ({
-  async find(ctx) {
-    // Only return orders for the logged-in user
-    ctx.query = {
-      ...ctx.query,
-      filters: {
-        ...(ctx.query.filters || {}),
-        user: ctx.state.user.id,
+  async create(ctx) {
+    const user = ctx.state.user;
+
+    if (!user) {
+      return ctx.unauthorized("Please log in to create an order");
+    }
+
+    const { items, totalQuantity } = ctx.request.body.data;
+
+    const order = await strapi.documents("api::order.order").create({
+      data: {
+        items,
+        totalQuantity,
+        orderDate: new Date(),
+        userEmail: user.email,
       },
-    };
-    return await super.find(ctx);
-  },
-
-  async findOne(ctx) {
-    const { id } = ctx.params;
-
-    // Find the order
-    const entity = await strapi.entityService.findOne("api::order.order", id, {
-      populate: { user: true },
+      // Connect the relation separately
+      status: "published",
     });
 
-    // Check if the order belongs to the logged-in user
-    if (!entity || entity.user.id !== ctx.state.user.id) {
-      return ctx.unauthorized("You cannot access this order");
-    }
+    // Connect user to order
+    await strapi.documents("api::order.order").update({
+      documentId: order.documentId,
+      data: {
+        user: user.id,
+      },
+    });
 
-    return await super.findOne(ctx);
+    return { data: order };
   },
 
-  async create(ctx) {
-    try {
-      // Validate authenticated user
-      if (!ctx.state.user) {
-        return ctx.unauthorized("You must be logged in to create an order");
-      }
-
-      // Extract data from request
-      const { items, totalQuantity } = ctx.request.body.data || {};
-
-      // Validate required fields
-      if (!items || !Array.isArray(items) || items.length === 0) {
-        return ctx.badRequest("Items array is required and cannot be empty");
-      }
-
-      if (!totalQuantity || totalQuantity <= 0) {
-        return ctx.badRequest("Valid totalQuantity is required");
-      }
-
-      // Defensive: check user email
-      const userEmail = ctx.state.user.email || null;
-
-      // Create order using entityService
-      const entity = await strapi.entityService.create("api::order.order", {
-        data: {
-          items,
-          totalQuantity,
-          orderDate: new Date(),
-          user: ctx.state.user.id,
-          userEmail,
-        },
-        populate: { user: true },
-      });
-
-      // Sanitize output
-      const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
-
-      // Return in Strapi v4 format
-      return this.transformResponse(sanitizedEntity);
-    } catch (err) {
-      strapi.log.error("Order creation error:", err);
-      return ctx.internalServerError("Order creation failed");
-    }
+  async find(ctx) {
+    const user = ctx.state.user;
+    ctx.query.filters = {
+      ...ctx.query.filters,
+      user: { id: user.id },
+    };
+    return await super.find(ctx);
   },
 }));
