@@ -28,8 +28,18 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       ...pagination,
     });
 
+    // Add itemsSummary and remove items from each order
+    const ordersWithSummary = orders.map((order) => {
+      const items = order.items || [];
+      order.itemsSummary = items
+        .map((item) => `${item.productName} (x${item.quantity})`)
+        .join(", ");
+      delete order.items;
+      return order;
+    });
+
     // Return in REST API format
-    return { data: orders };
+    return { data: ordersWithSummary };
   },
 
   async findOne(ctx) {
@@ -45,7 +55,14 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
       return ctx.unauthorized("You cannot access this order");
     }
 
-    return await super.findOne(ctx);
+    // Add itemsSummary and remove items
+    const items = entity.items || [];
+    entity.itemsSummary = items
+      .map((item) => `${item.productName} (x${item.quantity})`)
+      .join(", ");
+    delete entity.items;
+
+    return { data: entity };
   },
 
   async create(ctx) {
